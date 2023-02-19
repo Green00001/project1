@@ -1,8 +1,9 @@
 import axios from "axios";
 
-let kData;
+let kData = { bus: [], metro: [], train: [] }
 let cities;
 let nearby = { bus: [], metro: [], train: [] }
+let userNearby = null
 function reFact(arr) {
     return arr.data.map(e => {
         let obj = e;
@@ -32,21 +33,15 @@ const getAllMetroStations = () => {
         .get("http://localhost:3000/api/stations")
 };
 
-export const getCities = () => {
-    axios.get('http://localhost:3000/api/destinations').then(r => {
-        cities = r.data;
-    })
-}
 
 
 
 export const getAll = (setTransport, position) => {
-
     Promise.all([
         getAllBusStations(), getAllMetroStations()
     ]).then(r => {
         let obj = { bus: reFact(r[0]), metro: reFact(r[1]) }
-        kData = obj
+        kData = { bus: obj.bus.slice(), metro: obj.metro.slice() };
     })
     getNearbyStations(position, setTransport)
 }
@@ -54,24 +49,70 @@ export const getAll = (setTransport, position) => {
 
 export const searchAllTransport = (v, setSearch) => {
     if (v) {
-        setSearch(cities.filter(e => e.area.toLowerCase().includes(v.toLowerCase())).slice(0, 4))
+        axios.get(`https://nominatim.openstreetmap.org/search?q=${v}&format=json&addressdetails=1&polygon_geojson=0&countrycodes=TN&viewbox=10.0718,36.6507,10.3523,36.9168&limit=3`)
+            .then(r => setSearch(r.data.map(e => e)))
+
     } else {
         setSearch([])
     }
 }
 
-export const getNearbyStations = (position, setTransport) => {
-    console.log(position, "position")
+
+export const getLineStations = (element, setTransport, setPossibleTp, type) => {
+    const idx = element.line_number.indexOf(" ")
+    let identifier = ""
+    if (idx) {
+        identifier = element.line_number.slice(0, idx)
+    } else {
+        identifier = element.line_number
+    }
+
+    let obj = {
+        [type]: kData[type].filter(e => {
+            if (identifier === e.line_number.slice(0, identifier.length)) {
+                if (e.line_number.indexOf(" ") !== -1) {
+                    if (e.line_number.indexOf(" ") === idx) {
+                        return true
+                    }
+                }
+                else if (e.line_number.indexOf(" ") === -1) {
+                    if (e.line_number === identifier) {
+                        return true
+                    }
+                }
+            }
+
+        })
+    }
+    setTransport(obj)
+    setPossibleTp(null)
+
+}
+
+export const getNearbyStations = (position, setTransport, setPossibleTp) => {
 
     Promise.all([
         getNearbyBusStations(position), getNearbyMetroStations(position)
     ]).then(r => {
-
-        nearby = { bus: filter(nearby.bus, reFact(r[0])), metro: filter(nearby.metro, reFact(r[1])) }
+        const bus = filter(nearby.bus, reFact(r[0]))
+        const metro = filter(nearby.metro, reFact(r[1]))
+        nearby = { bus: bus, metro: metro }
         setTransport(nearby)
-
-
-
+        if (!userNearby) {
+            userNearby = { bus: bus.slice(), metro: metro.slice() }
+        } else {
+            setPossibleTp({
+                bus: r[0].data.filter(e => {
+                    let condition;
+                    userNearby.bus.forEach(element => {
+                        if (element.line_number === e.line_number) {
+                            condition = true;
+                        }
+                    });
+                    return condition;
+                })
+            })
+        }
     })
 
 

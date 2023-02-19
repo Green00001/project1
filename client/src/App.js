@@ -1,22 +1,18 @@
-import Map from "./components/Map/Map";
-import { useEffect, useState } from "react"
-import Interface from "./components/Ifc";
+import Ifc from './components/Ifc'
+import { useState, useRef } from "react"
+import Map from "./components/Map/Map"
 
 function App() {
-
-  useEffect(() => {
-
-
-  }, [])
-
-
-
+  const [search, setSearch] = useState([])
+  const [transport, setTransport] = useState({})
+  const [possibleTp, setPossibleTp] = useState({})
+  const mapRef = useRef();
   return (
-    <div>
-        <Interface />
+    <>
 
-        <Map />
-    </div>
+      <Map setPossibleTp={setPossibleTp} possibleTp={possibleTp} transport={transport} setTransport={setTransport} mapRef={mapRef} />
+      <Ifc setPossibleTp={setPossibleTp} setTransport={setTransport} mapRef={mapRef} search={search} setSearch={setSearch} />
+    </>
   );
 }
 

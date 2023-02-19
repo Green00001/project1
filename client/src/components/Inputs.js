@@ -1,9 +1,7 @@
-import React, { useState } from 'react'
-import { searchAllTransport } from '../functions/stations'
+import { searchAllTransport, getNearbyStations } from '../functions/stations'
 
-export default function Destination() {
-    const [search, setSearch] = useState([])
-    console.log(search)
+export default function Destination({ search, setSearch, mapRef, setTransport, setPossibleTp }) {
+    let inputV = ""
     return (
         <div
             style={{
@@ -15,8 +13,20 @@ export default function Destination() {
                 boxShadow: "  0px 40px 17px 0px rgba(0,0,0,0.2)",
             }}>
             <input onChange={(e) => {
-                searchAllTransport(e.target.value, setSearch);
+                inputV = e.target.value
             }}
+                onBlur={() => {
+                    setTimeout(() => {
+                        setSearch([])
+                    }, 230)
+                }}
+
+                onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+
+                        searchAllTransport(inputV, setSearch);
+                    }
+                }}
                 placeholder="Where to go ?" style={{
                     display: "block", left: "50%"
                     , width: "100%", height: "8vh", borderRadius: "20px 20px 0 0", border: "none",
@@ -67,14 +77,18 @@ export default function Destination() {
 
             }}>
                 <div>
-                    {search.map((e, i) => {
-                        return <div key={i} style={Object.assign({
-                            padding: "21px", fontSize: "30px",
-                            color: "black",
-                            cursor: "pointer",
-
-                        }, i === search.length - 1 ? {} : { borderBottom: "1px solid" })}>
-                            {e.area}
+                    {search.map((item, i) => {
+                        return <div onClick={() => {
+                            mapRef.current.flyTo([item.lat, item.lon])
+                            getNearbyStations([item.lat, item.lon], setTransport, setPossibleTp, "bus")
+                        }}
+                            key={i} style={Object.assign({
+                                padding: "21px", fontSize: "30px",
+                                color: "black",
+                                cursor: "pointer",
+                                zIndex: "99999999999999999999"
+                            }, i === search.length - 1 ? {} : { borderBottom: "1px solid" })}>
+                            {item.display_name}
                         </div>
                     })}
                 </div>

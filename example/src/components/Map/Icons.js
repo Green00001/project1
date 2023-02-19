@@ -4,7 +4,6 @@ import busIcon from "../../assets/bus.png";
 import metroIcon from "../../assets/metro.png";
 import trainIcon from "../../assets/train.png";
 import destination from "../../assets/destination.png";
-import possible from "../../assets/possible.gif";
 
 export const UserIcon = L.icon({
     iconUrl: userIcon,
@@ -36,12 +35,5 @@ export const DestinationIcon = L.icon({
     iconSize: [50, 50],
     // iconAnchor: [24, 68],
     iconAnchor: [0, 70],
-    popupAnchor: [2, -60],
-});
-export const PossibleIcon = L.icon({
-    iconUrl: possible,
-    iconSize: [80, 80],
-    // iconAnchor: [24, 68],
-    iconAnchor: [41, 58],
     popupAnchor: [2, -60],
 });

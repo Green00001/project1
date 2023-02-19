@@ -2,15 +2,19 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
 import Loading from '../Loading/Loading'
-import { UserIcon, BusIcon, MetroIcon, PossibleIcon } from "./Icons";
+import { UserIcon, BusIcon, MetroIcon, DestinationIcon } from "./Icons";
 import { mapLocation } from "../../functions/map"
-import { getAll, getLineStations } from "../../functions/stations"
+import { getAll, getNearbyStations } from "../../functions/stations"
 import "./map.css"
+import LGeoCoder from "./LGeoCoder"
 
-export default function Map({ mapRef, transport, setTransport, possibleTp, setPossibleTp }) {
+export default function Map({map}) {
     const mapFetched = useRef(false);
     const [position, setPosition] = useState([])
-    console.log(transport)
+    const [transport, setTransport] = useState({})
+    // const [destination, setDestination] = useState({})
+
+    console.log(transport && transport.bus, "aze")
     useEffect(() => {
         if (mapFetched.current) return;
 
@@ -23,9 +27,9 @@ export default function Map({ mapRef, transport, setTransport, possibleTp, setPo
 
     return (
         <>
-
+         
             {position.length ?
-                <MapContainer ref={mapRef} center={position} zoom={16} scrollWheelZoom={true} >
+                <MapContainer ref={map} center={position} zoom={16} scrollWheelZoom={true} >
                     <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -47,31 +51,12 @@ export default function Map({ mapRef, transport, setTransport, possibleTp, setPo
                         </Marker>
                     ))}
                     {transport.bus && transport.bus.map((e, i) => (
-                        <Marker
-                            key={i} position={e.position} icon={BusIcon}>
+                        <Marker key={i} position={e.position} icon={BusIcon}>
                             <Popup >
                                 <h3 style={{ textAlign: "center" }}>{e.station_name}</h3>
                             </Popup>
                         </Marker>
                     ))}
-
-
-                    {possibleTp ? possibleTp.bus && possibleTp.bus.map((e, i) => (
-                        <Marker
-                            eventHandlers={{
-                                click: () => {
-                                    getLineStations(e, setTransport, setPossibleTp, "bus")
-
-                                },
-                            }}
-
-                            key={i} position={e.position} icon={PossibleIcon}>
-                            <Popup >
-                                <h3 style={{ textAlign: "center" }}>{e.station_name}</h3>
-                            </Popup>
-                        </Marker>
-                    )) : null}
-
 
 
 

@@ -1,7 +1,7 @@
 import React from 'react'
-import Inputs from './Destination'
+import Inputs from './Inputs'
 import Choices from './Choices/Choices'
-export default function Ifc() {
+export default function Ifc({ search, setSearch, mapRef, setTransport, setPossibleTp }) {
   return (
 
     <div style={{
@@ -15,9 +15,9 @@ export default function Ifc() {
       textAlign: "center",
 
     }}>
-      
-      <Inputs />
-     
+
+      <Inputs setPossibleTp={setPossibleTp} setTransport={setTransport} mapRef={mapRef} search={search} setSearch={setSearch} />
+
       <Choices />
 
 

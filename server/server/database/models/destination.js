@@ -19,7 +19,7 @@ module.exports={
                                      Sin(Radians(latitude)))
                ) AS distance_m
         FROM   ${transport}
-        HAVING distance_m < 40000`
+        HAVING distance_m < 1000`
        return  connection.query(sql)
       }
 

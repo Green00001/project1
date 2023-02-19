@@ -17,6 +17,7 @@ const LeafletGeocoder = ({ getNearBy, setTransport, transport }) => {
             defaultMarkGeocode: false,
         })
             .on("markgeocode", function (e) {
+                console.log(transport, "transporst")
 
                 if (marker) {
                     marker.remove();

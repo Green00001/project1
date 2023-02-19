@@ -2,6 +2,17 @@ import axios from "axios";
 
 let kData;
 let cities;
+let nearby = { bus: [], metro: [], train: [] }
+function reFact(arr) {
+    return arr.data.map(e => {
+        let obj = e;
+        obj.position = [e.latitude, e.longitude]
+        delete obj.latitude
+        delete obj.longitude
+        return obj
+    })
+}
+
 const getAllBusStations = () => {
     return axios
         .get("http://localhost:3000/api/bus")
@@ -10,10 +21,10 @@ const getAllBusStations = () => {
 
 
 
-const getAllTrainStations = () => {
-    return axios
-        .get("http://localhost:3000/api/trains")
-};
+// const getAllTrainStations = () => {
+//     return axios
+//         .get("http://localhost:3000/api/trains")
+// };
 
 
 const getAllMetroStations = () => {
@@ -29,30 +40,16 @@ export const getCities = () => {
 
 
 
-export const getAll = (setTransport) => {
+export const getAll = (setTransport, position) => {
 
     Promise.all([
-        getAllBusStations(), getAllTrainStations(), getAllMetroStations()
+        getAllBusStations(), getAllMetroStations()
     ]).then(r => {
-        let obj = { bus: reFact(r[0]), train: reFact(r[1]), metro: reFact(r[2]) }
+        let obj = { bus: reFact(r[0]), metro: reFact(r[1]) }
         kData = obj
-        setTransport(obj)
     })
-
-
-    function reFact(arr) {
-        return arr.data.map(e => {
-            let obj = e;
-            obj.lat = e.latitude;
-            obj.lng = e.longitude
-            delete obj.latitude
-            delete obj.longitude
-            return obj
-        })
-    }
+    getNearbyStations(position, setTransport)
 }
-
-
 
 
 export const searchAllTransport = (v, setSearch) => {
@@ -62,12 +59,55 @@ export const searchAllTransport = (v, setSearch) => {
         setSearch([])
     }
 }
-export const getNearbyBusStations = (userLocation, setNearbyBusStations) => {
-    console.log(userLocation)
-    axios
-        .get('http://localhost:3000/api/train/36.4028/10.1433')
-        .then((res) => console.log(res.data))
-        .catch((err) => console.log(err));
+
+export const getNearbyStations = (position, setTransport) => {
+    console.log(position, "position")
+
+    Promise.all([
+        getNearbyBusStations(position), getNearbyMetroStations(position)
+    ]).then(r => {
+
+        nearby = { bus: filter(nearby.bus, reFact(r[0])), metro: filter(nearby.metro, reFact(r[1])) }
+        setTransport(nearby)
+
+
+
+    })
+
+
+    function filter(arr1, arr2) {
+        let acc = [];
+        if (arr1.length) {
+            acc = arr1
+            arr2.forEach(element2 => {
+                let condition;
+                arr1.forEach(element1 => {
+                    if (element1.station_name === element2.station_name) {
+                        condition = true;
+                    }
+                });
+                if (!condition) {
+                    acc.push(element2)
+                }
+            });
+        } else {
+            acc = arr2
+        }
+        return acc
+    }
+}
+
+const getNearbyBusStations = (userLocation) => {
+
+    return axios
+        .get(`http://localhost:3000/api/bus/nearby/${userLocation[0] + "/" + userLocation[1]}`)
+
+};
+const getNearbyMetroStations = (userLocation) => {
+
+    return axios
+        .get(`http://localhost:3000/api/stations/nearby/${userLocation[0] + "/" + userLocation[1]}`)
+
 };
 
 // export const getNearbyTrainStations = (userlat, userlong, setNearbyTrainStations) => {
