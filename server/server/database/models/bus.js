@@ -19,7 +19,7 @@ module.exports={
                                      Sin(Radians(latitude)))
                ) AS distance_m
         FROM   bus
-        HAVING distance_m < 3990000`
+        HAVING distance_m < 2000`
        return  connection.query(sql)
       }
 
