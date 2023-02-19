@@ -1,5 +1,6 @@
 const express = require('express')
 const db = require('./database')
+
 const cors = require('cors')
 const connection = require("./database/index")
 const PORT = 3000
@@ -22,18 +23,12 @@ app.use('/api',destinationRouter)
 
 
 
-// const dezz = () => {
-//   obj.forEach((e) => {
-//     // console.log({...e, lat:Number(e.lat)})5
-//     connection.query(`INSERT INTO areas (area,latituede,longitude)  VALUES ("${e["city"]}", ${Number(e["lat"])},${Number(e["lng"])})`)
-//   })
-
-
-// }
 
 
 
-app.listen(PORT, () => {
-  // dezz()
+
+
+
+
   console.log(`Server listening at http://localhost:${PORT}`)
 })
