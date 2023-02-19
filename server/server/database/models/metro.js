@@ -20,7 +20,9 @@ module.exports={
                                      Sin(Radians(latitude)))
                ) AS distance_m
         FROM   geolocation
-        HAVING distance_m < 5000`
+
+        HAVING distance_m < 3000`
+
         return  connection.query(sql)
       }
 }
