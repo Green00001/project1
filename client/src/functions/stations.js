@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { userLocation } from "./map"
 let kData = { bus: [], metro: [], train: [] }
 let cities;
 let nearby = { bus: [], metro: [], train: [] }
@@ -22,10 +22,10 @@ const getAllBusStations = () => {
 
 
 
-// const getAllTrainStations = () => {
-//     return axios
-//         .get("http://localhost:3000/api/trains")
-// };
+const getAllTrainStations = () => {
+    return axios
+        .get("http://localhost:3000/api/trains")
+};
 
 
 const getAllMetroStations = () => {
@@ -38,9 +38,11 @@ const getAllMetroStations = () => {
 
 export const getAll = (setTransport, position) => {
     Promise.all([
-        getAllBusStations(), getAllMetroStations()
+        getAllBusStations(), getAllMetroStations(), getAllTrainStations()
     ]).then(r => {
-        let obj = { bus: reFact(r[0]), metro: reFact(r[1]) }
+        let obj = {
+            bus: reFact(r[0]), metro: reFact(r[1]), train: reFact(r[2])
+        }
         kData = { bus: obj.bus.slice(), metro: obj.metro.slice() };
     })
     getNearbyStations(position, setTransport)
@@ -58,7 +60,7 @@ export const searchAllTransport = (v, setSearch) => {
 }
 
 
-export const getLineStations = (element, setTransport, setPossibleTp, type) => {
+export const getLineStations = (element, setTransport, setPossibleTp, type, mapRef, setNearestStation) => {
     const idx = element.line_number.indexOf(" ")
     let identifier = ""
     if (idx) {
@@ -66,7 +68,6 @@ export const getLineStations = (element, setTransport, setPossibleTp, type) => {
     } else {
         identifier = element.line_number
     }
-
     let obj = {
         [type]: kData[type].filter(e => {
             if (identifier === e.line_number.slice(0, identifier.length)) {
@@ -84,7 +85,33 @@ export const getLineStations = (element, setTransport, setPossibleTp, type) => {
 
         })
     }
+
+    let nearestStation = { distance_m: 0 }
+    obj[type].forEach((element, i) => {
+        userNearby[type].forEach(e => {
+            if (e.idbus === element.idbus) {
+                obj[type][i] = e
+                if (e.distance_m > nearestStation.distance_m) {
+                    nearestStation = e
+                }
+            }
+        });
+    });
+
+
+    obj[type] = obj[type].filter(e => {
+        if (e.line_number === nearestStation.line_number) {
+            return e.station_number <= nearestStation.station_number
+        } else {
+            return false
+        }
+    })
+
+    obj[type].reverse()
+
+    setNearestStation(nearestStation)
     setTransport(obj)
+    mapRef.current.flyTo(userLocation)
     setPossibleTp(null)
 
 }
@@ -92,14 +119,16 @@ export const getLineStations = (element, setTransport, setPossibleTp, type) => {
 export const getNearbyStations = (position, setTransport, setPossibleTp) => {
 
     Promise.all([
-        getNearbyBusStations(position), getNearbyMetroStations(position)
+        getNearbyBusStations(position), getNearbyMetroStations(position), getNearbyTrainStations(position)
     ]).then(r => {
         const bus = filter(nearby.bus, reFact(r[0]))
         const metro = filter(nearby.metro, reFact(r[1]))
-        nearby = { bus: bus, metro: metro }
+        const train = filter(nearby.train, reFact(r[2]))
+        nearby = { bus: bus, metro: metro, train: train };
+
         setTransport(nearby)
         if (!userNearby) {
-            userNearby = { bus: bus.slice(), metro: metro.slice() }
+            userNearby = { bus: bus.slice(), metro: metro.slice(), train: train.slice() }
         } else {
             setPossibleTp({
                 bus: r[0].data.filter(e => {
@@ -151,12 +180,11 @@ const getNearbyMetroStations = (userLocation) => {
 
 };
 
-// export const getNearbyTrainStations = (userlat, userlong, setNearbyTrainStations) => {
-//     axios
-//         .get(`/api/trains/nearby/${userlat}/${userlong}`)
-//         .then((res) => setNearbyTrainStations(res.data))
-//         .catch((err) => console.log(err));
-// };
+export const getNearbyTrainStations = (userLocation) => {
+    return axios
+        .get(`http://localhost:3000/api/trains/nearby/${userLocation[0] + "/" + userLocation[1]}`)
+
+};
 
 
 

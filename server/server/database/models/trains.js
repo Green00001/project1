@@ -19,7 +19,8 @@ module.exports={
                                  Sin(Radians(latitude)))
            ) AS distance_m
     FROM   train
-    HAVING distance_m < 5000`
+    HAVING distance_m < 2000
+    Order by distance_m ASC;`
     return connection.query(sql)
   }
 }
