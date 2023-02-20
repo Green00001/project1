@@ -1,18 +1,29 @@
-import Ifc from './components/Ifc'
-import { useState, useRef } from "react"
-import Map from "./components/Map/Map"
+import Home from './pages/Home'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+
+} from "react-router-dom";
+import React, { Profiler, useEffect } from 'react'
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import Profile from "./pages/Profile"
 
 function App() {
-  const [search, setSearch] = useState([])
-  const [transport, setTransport] = useState({})
-  const [possibleTp, setPossibleTp] = useState({})
-  const mapRef = useRef();
-  return (
-    <>
 
-      <Map setPossibleTp={setPossibleTp} possibleTp={possibleTp} transport={transport} setTransport={setTransport} mapRef={mapRef} />
-      <Ifc setPossibleTp={setPossibleTp} setTransport={setTransport} mapRef={mapRef} search={search} setSearch={setSearch} />
-    </>
+
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route exact path="/" element={<Home />} />
+        <Route exact path="/login" element={<Login />} />
+        <Route exact path="/signup" element={<SignUp />} />
+        <Route exact path="/profile" element={<Profile />} />
+
+      </Routes>
+    </BrowserRouter>
   );
 }
 

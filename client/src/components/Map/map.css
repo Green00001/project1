@@ -27,3 +27,15 @@ leaflet-control-geocoder-icon {
 .leaflet-control-geocoder-icon {
     display: none !important;
 }
+.leaflet-routing-alt {
+    display: none !important;
+}
+.leaflet-routing-container .leaflet-bar leaflet-control {
+    display: none !important;
+
+}
+
+.leaflet-touch .leaflet-bar {
+    display: none !important;
+
+}

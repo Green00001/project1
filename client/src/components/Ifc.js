@@ -13,14 +13,11 @@ export default function Ifc({ search, setSearch, mapRef, setTransport, setPossib
       color: "white",
       borderRadius: '20px 20px 0 0',
       textAlign: "center",
-
+      
     }}>
-
       <Inputs setPossibleTp={setPossibleTp} setTransport={setTransport} mapRef={mapRef} search={search} setSearch={setSearch} />
 
       <Choices />
-
-
     </div>
   )
 }

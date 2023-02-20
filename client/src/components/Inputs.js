@@ -1,4 +1,5 @@
 import { searchAllTransport, getNearbyStations } from '../functions/stations'
+import { FaHome, FaSuitcase } from "react-icons/fa";
 
 export default function Destination({ search, setSearch, mapRef, setTransport, setPossibleTp }) {
     let inputV = ""
@@ -10,7 +11,7 @@ export default function Destination({ search, setSearch, mapRef, setTransport, s
                 left: "50%",
                 height: "16vh", width: "90vw",
                 borderRadius: "20px",
-                boxShadow: "  0px 40px 17px 0px rgba(0,0,0,0.2)",
+                boxShadow: "  0px 40px 17px 0px rgba(0,0,0,0.2)"
             }}>
             <input onChange={(e) => {
                 inputV = e.target.value
@@ -30,7 +31,7 @@ export default function Destination({ search, setSearch, mapRef, setTransport, s
                 placeholder="Where to go ?" style={{
                     display: "block", left: "50%"
                     , width: "100%", height: "8vh", borderRadius: "20px 20px 0 0", border: "none",
-                    fontSize: "30px", textAlign: "center", padding: "0"
+                    fontSize: "30px", textAlign: "center", padding: "0", borderBottom: "1px solid "
 
                 }} />
             <div style={{
@@ -45,12 +46,26 @@ export default function Destination({ search, setSearch, mapRef, setTransport, s
                         fontSize: "30px",
                         border: "none",
                         textAlign: "center",
-                        zIndex: '-1'
+                        zIndex: '1', borderRight: "1px solid", borderTop: "1px solid"
                     }} />
 
 
-                    <div style={{ color: "black", width: "35%", borderLeft: "1px" }}>
+                    <div style={{ color: "black", width: "35%", borderLeft: "1px", display: "flex" }}>
+                        <div style={{ width: "50%" }}>
+                            <FaHome style={{
+                                width: "70px", height: "70px", transform: "translate(-50%,-50%)",
+                                bottom: '-30px', position: "absolute", color: "#1c3755"
+                            }} />
+                        </div>
+                        <div onClick={() => {
+                            // console.log(mapRef.current.fly([36.8951, 10.1885]))
 
+                        }} style={{ width: "50%", borderLeft: "1px solid", }}>
+                            <FaSuitcase style={{
+                                width: "70px", height: "70px", transform: "translate(-50%,-50%)",
+                                bottom: '-30px', position: "absolute", color: "#1c3755",
+                            }} />
+                        </div>
 
                     </div>
 
