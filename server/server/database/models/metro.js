@@ -20,8 +20,12 @@ module.exports={
                                      Sin(Radians(latitude)))
                ) AS distance_m
         FROM   geolocation
+
         HAVING distance_m < 2000
         Order by distance_m ASC;`
+
+
+
         return  connection.query(sql)
       }
 }

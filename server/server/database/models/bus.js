@@ -19,8 +19,10 @@ module.exports={
                                      Sin(Radians(latitude)))
                ) AS distance_m
         FROM   bus
+
         HAVING distance_m < 1000
         Order by distance_m ASC;`
+
        return  connection.query(sql)
       }
 
