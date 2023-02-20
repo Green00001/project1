@@ -27,11 +27,10 @@ export const MetroIcon = L.icon({
 export const TrainIcon = L.icon({
     iconUrl: trainIcon,
     iconSize: [50, 70],
-    // iconAnchor: [24, 68],
-    iconAnchor: [0, -250],
+    iconAnchor: [28, 57],
     popupAnchor: [2, -40],
 });
-export const DestinationIcon = L.icon({
+export const PinIcon = L.icon({
     iconUrl: destination,
     iconSize: [50, 50],
     // iconAnchor: [24, 68],
